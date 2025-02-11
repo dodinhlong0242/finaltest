@@ -23,7 +23,7 @@ typedef struct {
     char phone[20];
 } Student;
 
-// Bi?n toàn c?c
+// Bien toan cuc
 extern Student students[MAX];
 extern int studentCount;
 
