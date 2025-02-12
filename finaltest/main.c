@@ -1,4 +1,5 @@
 #include "function.h"
+#include <stdio.h>
 
 int main() {
     loadStudentsFromFile();
@@ -6,14 +7,18 @@ int main() {
     printf("\n===================================\n");
     printf("    HE THONG QUAN LY SINH VIEN    \n");
     printf("===================================\n");
+    
     while (1) {
-    	printf("\n==============================\n");
-        printf("\nMENU QUAN LY SINH VIEN:\n");
-        printf("\n=============================\n");
+        printf("\n==============================\n");
+        printf("        MENU QUAN LY SINH VIEN:\n");
+        printf("==============================\n");
         printf("1. Hien thi danh sach sinh vien\n");
         printf("2. Them sinh vien\n");
         printf("3. Sua thong tin sinh vien\n");
-        printf("4. Thoat\n");
+        printf("4. Xoa sinh vien\n");
+        printf("5. Tim kiem sinh vien theo ten\n");
+        printf("6. Thoat\n");
+        printf("==============================\n");
         printf("Nhap lua chon: ");
         scanf("%d", &choice);
         getchar();
@@ -29,10 +34,16 @@ int main() {
                 updateStudent();
                 break;
             case 4:
-                saveStudentsToFile();
+                deleteStudent();
+                break;
+            case 5:
+                searchStudentByName();
+                break;
+            case 6:
+                saveStudentsToFile(); // G?i hàm luu danh sách sinh viên
                 exit(0);
             default:
-                printf("Lua chon khong hop le!\n");
+                printf("Lua chon khong hop le! Xin vui long chon lai.\n");
         }
     }
     return 0;

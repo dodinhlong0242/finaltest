@@ -6,26 +6,25 @@ int studentCount = 0;
 
 const char *FILE_PATH = "hocsinh.bin";
 
+// Hàm thêm sinh viên vào danh sách
 void addStudent() {
     if (studentCount >= MAX) {
         printf("Danh sach sinh vien da day!\n");
         return;
     }
 
-    // Kiem tra ID sinh vien da ton tai hay chua
     char studentId[10];
     int idExists = 0;
-    
+
     do {
         printf("Nhap ma sinh vien: ");
         scanf("%9s", studentId);
         getchar();
 
-        // Kiem tra xem ID da ton tai trong danh sach sinh vien
         idExists = 0;
         for (int i = 0; i < studentCount; i++) {
             if (strcmp(students[i].studentId, studentId) == 0) {
-                idExists = 1;  // ID ton tai, yeu cau nhap lai
+                idExists = 1;
                 break;
             }
         }
@@ -33,35 +32,67 @@ void addStudent() {
         if (idExists) {
             printf("Ma sinh vien da ton tai, vui long nhap ma khac!\n");
         } else {
-            break;  // ID chua ton tai, cho phep nhap thong tin sinh vien
+            break;
         }
-    } while (idExists);  // Lap lai neu ID ton tai
+    } while (idExists);
 
-    // Them sinh vien vao danh sach
-    strcpy(students[studentCount].studentId, studentId);  // Luu ID sinh vien
+    // Nh?p thông tin sinh viên
+    strcpy(students[studentCount].studentId, studentId);
     printf("Nhap ten sinh vien: ");
     fgets(students[studentCount].name, sizeof(students[studentCount].name), stdin);
     strtok(students[studentCount].name, "\n");
+
     printf("Nhap ngay sinh (dd mm yyyy): ");
     scanf("%d %d %d", &students[studentCount].dateOfBirth.day, &students[studentCount].dateOfBirth.month, &students[studentCount].dateOfBirth.year);
     getchar();
+
     printf("Nhap gioi tinh (0: Nam, 1: Nu): ");
     scanf("%d", &students[studentCount].gender);
     getchar();
+
     printf("Nhap email: ");
     fgets(students[studentCount].email, sizeof(students[studentCount].email), stdin);
     strtok(students[studentCount].email, "\n");
+
     printf("Nhap so dien thoai: ");
     scanf("%19s", students[studentCount].phone);
     getchar();
 
-    studentCount++;  // Tang s? lu?ng sinh viên
-    saveStudentsToFile();  // Luu thông tin sinh viên vào file
+    studentCount++;
+    saveStudentsToFile();
     printf("\nSinh vien da duoc them thanh cong!\n");
-
-    backToMenu();  // Quay l?i menu chính
 }
 
+// Hàm luu danh sách sinh viên vào file
+void saveStudentsToFile() {
+    FILE *file = fopen(FILE_PATH, "wb");  // M? file ? ch? d? ghi nh? phân
+    if (file == NULL) {
+        printf("Loi khi mo file!\n");
+        return;
+    }
+    size_t written = fwrite(students, sizeof(Student), studentCount, file);  // Ghi d? li?u vào file
+    if (written != studentCount) {
+        printf("Loi khi ghi du lieu vao file!\n");
+    } else {
+        printf("Danh sach sinh vien da duoc luu vao file %s\n", FILE_PATH);
+    }
+
+    fclose(file);  // Ð?m b?o dóng file sau khi ghi
+}
+
+// Hàm t?i danh sách sinh viên t? file
+void loadStudentsFromFile() {
+    FILE *file = fopen(FILE_PATH, "rb");
+    if (file == NULL) {
+        printf("Khong tim thay file danh sach sinh vien, tao danh sach moi.\n");
+        return;
+    }
+    studentCount = fread(students, sizeof(Student), MAX, file);
+    fclose(file);
+    printf("Danh sach sinh vien da duoc nap thanh cong!\n");
+}
+
+// Hàm hi?n th? danh sách sinh viên du?i d?ng b?ng
 void listStudents() {
     if (studentCount == 0) {
         printf("Khong co sinh vien nao!\n");
@@ -69,76 +100,32 @@ void listStudents() {
     }
 
     printf("\n**** All Students ****\n");
-
-    printf("+============+================+======================+===============+===========+\n");
-    printf("| %-10s | %-14s | %-20s | %-13s | %-9s |\n", "ID", "Name", "Email", "Phone", "Course");
-    printf("+============+================+======================+===============+===========+\n");
+    printf("+============+===================+====================+===============+===========+\n");
+    printf("| %-10s | %-17s | %-18s | %-13s | %-9s |\n", "ID", "Name", "Email", "Phone", "Course");
+    printf("+============+===================+====================+===============+===========+\n");
 
     for (int i = 0; i < studentCount; i++) {
-        printf("| %-10s | %-14s | %-20s | %-13s | %-9d |\n", 
+        printf("| %-10s | %-17s | %-18s | %-13s | %-9d |\n", 
                students[i].studentId, students[i].name, 
                students[i].email, students[i].phone, i + 1);
-        printf("+------------+----------------+----------------------+---------------+-----------+\n");
+        printf("+------------+-------------------+--------------------+---------------+-----------+\n");
     }
 
     backToMenu();  // Quay l?i menu chính
 }
 
-void saveStudentsToFile() {
-    FILE *file = fopen(FILE_PATH, "wb");  // M? file ? ch? d? ghi nh? phân
-    if (file == NULL) {
-        printf("Loi khi mo file!\n");
-        return;
-    }
-    fwrite(students, sizeof(Student), studentCount, file);  // Ghi d? li?u vào file
-    fclose(file);  // Ð?m b?o dóng file sau khi ghi
-    printf("Danh sach sinh vien da duoc luu vao file %s\n", FILE_PATH);
-}
-
-void loadStudentsFromFile() {
-    FILE *file = fopen(FILE_PATH, "rb");  // M? file ? ch? d? d?c nh? phân
-    if (file == NULL) {
-        printf("Khong tim thay file danh sach sinh vien, tao danh sach moi.\n");
-        return;
-    }
-    studentCount = fread(students, sizeof(Student), MAX, file);  // Ð?c d? li?u t? file
-    fclose(file);  // Ð?m b?o dóng file sau khi d?c
-    printf("Danh sach sinh vien da duoc nap thanh cong!\n");
-}
-
+// Hàm c?p nh?t thông tin sinh viên
 void updateStudent() {
     char studentId[10];
-    int found = 0;
-
     printf("Nhap ma sinh vien muon sua: ");
     scanf("%9s", studentId);
     getchar();
 
     for (int i = 0; i < studentCount; i++) {
         if (strcmp(students[i].studentId, studentId) == 0) {
-            found = 1;
-
-            printf("\nThong tin sinh vien hien tai:\n");
-            printf("ID: %s\n", students[i].studentId);
-            printf("Ten: %s\n", students[i].name);
-            printf("Ngay Sinh: %02d/%02d/%04d\n", students[i].dateOfBirth.day, students[i].dateOfBirth.month, students[i].dateOfBirth.year);
-            printf("Gioi Tinh: %s\n", students[i].gender == 0 ? "Nam" : "Nu");
-            printf("Email: %s\n", students[i].email);
-            printf("So DT: %s\n", students[i].phone);
-
-            printf("\nNhap thong tin moi cho sinh vien:\n");
-
-            printf("Nhap ten sinh vien moi: ");
+            printf("Nhap ten moi: ");
             fgets(students[i].name, sizeof(students[i].name), stdin);
             strtok(students[i].name, "\n");
-
-            printf("Nhap ngay sinh moi (dd mm yyyy): ");
-            scanf("%d %d %d", &students[i].dateOfBirth.day, &students[i].dateOfBirth.month, &students[i].dateOfBirth.year);
-            getchar();
-
-            printf("Nhap gioi tinh moi (0: Nam, 1: Nu): ");
-            scanf("%d", &students[i].gender);
-            getchar();
 
             printf("Nhap email moi: ");
             fgets(students[i].email, sizeof(students[i].email), stdin);
@@ -148,22 +135,65 @@ void updateStudent() {
             scanf("%19s", students[i].phone);
             getchar();
 
-            saveStudentsToFile();  // Luu thông tin dã s?a vào file
-            printf("\nThong tin sinh vien da duoc sua thanh cong!\n");
+            saveStudentsToFile();
+            printf("\nThong tin sinh vien da duoc cap nhat thanh cong!\n");
+            return;
+        }
+    }
+    printf("Sinh vien voi ma ID '%s' khong ton tai!\n", studentId);
+}
 
-            backToMenu();  // Quay l?i menu chính
+// Hàm tìm ki?m sinh viên theo tên
+void searchStudentByName() {
+    char searchName[50];
+    printf("Nhap ten sinh vien muon tim kiem: ");
+    fgets(searchName, sizeof(searchName), stdin);
+    strtok(searchName, "\n");
+
+    for (int i = 0; i < studentCount; i++) {
+        if (strstr(students[i].name, searchName) != NULL) {
+            printf("ID: %s, Ten: %s, Email: %s, Phone: %s\n", students[i].studentId, students[i].name, students[i].email, students[i].phone);
+        }
+    }
+}
+
+// Hàm xóa sinh viên kh?i danh sách
+void deleteStudent() {
+    if (studentCount == 0) {
+        printf("Danh sach sinh vien dang trong!\n");
+        return;
+    }
+
+    char studentId[10];
+    printf("Nhap ma sinh vien muon xoa: ");
+    scanf("%9s", studentId);
+    getchar();
+
+    int foundIndex = -1;
+    for (int i = 0; i < studentCount; i++) {
+        if (strcmp(students[i].studentId, studentId) == 0) {
+            foundIndex = i;
             break;
         }
     }
 
-    if (!found) {
-        printf("Sinh vien voi ma ID '%s' khong ton tai!\n", studentId);
+    if (foundIndex == -1) {
+        printf("Khong tim thay sinh vien voi ID '%s'!\n", studentId);
+        return;
     }
+
+    for (int i = foundIndex; i < studentCount - 1; i++) {
+        students[i] = students[i + 1];
+    }
+    studentCount--;
+    saveStudentsToFile();
+    printf("Sinh vien da duoc xoa thanh cong!\n");
 }
 
+// Hàm quay l?i menu chính
 void backToMenu() {
     char option;
-    printf("\nQuay lai menu chinh (b) hoac Thoat (0)?: ");
+    printf("\nGo back(b)? or Exit(0)?: ");
     scanf(" %c", &option);
     if (option == 'b') {
         return;
