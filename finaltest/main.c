@@ -1,51 +1,60 @@
+#include "datatype.h"
 #include "function.h"
 #include <stdio.h>
+#include <stdlib.h>
+void start(){
+	loadStudentsFromFile();  // Load d? li?u sinh vi?n t? file
 
-int main() {
-    loadStudentsFromFile();
-    int choice;
-    printf("\n===================================\n");
-    printf("    HE THONG QUAN LY SINH VIEN    \n");
-    printf("===================================\n");
-    
     while (1) {
-        printf("\n==============================\n");
-        printf("        MENU QUAN LY SINH VIEN:\n");
-        printf("==============================\n");
-        printf("1. Hien thi danh sach sinh vien\n");
-        printf("2. Them sinh vien\n");
-        printf("3. Sua thong tin sinh vien\n");
-        printf("4. Xoa sinh vien\n");
-        printf("5. Tim kiem sinh vien theo ten\n");
-        printf("6. Thoat\n");
-        printf("==============================\n");
+        showMenu();  // Hi?n th? menu ch?nh
+        int choice;
         printf("Nhap lua chon: ");
         scanf("%d", &choice);
-        getchar();
+        system("cls");
 
+        // Th?c hi?n c?c ch?c nang theo l?a ch?n
         switch (choice) {
             case 1:
-                listStudents();
+                listStudents();  // Hi?n th? danh s?ch sinh vi?n
                 break;
             case 2:
-                addStudent();
+                addStudent();  // Th?m sinh vi?n
                 break;
             case 3:
-                updateStudent();
+                updateStudent();  // S?a th?ng tin sinh vi?n
                 break;
             case 4:
-                deleteStudent();
+                deleteStudent();  // X?a sinh vi?n
                 break;
             case 5:
-                searchStudentByName();
+                searchStudentByName();  // T?m ki?m sinh vi?n theo t?n
                 break;
             case 6:
-                saveStudentsToFile(); // G?i hàm luu danh sách sinh viên
-                exit(0);
+                sortStudentsByName();  // S?p x?p danh s?ch sinh vi?n
+                break;
+            case 7:
+                exit(0);  // Tho?t chuong tr?nh
             default:
-                printf("Lua chon khong hop le! Xin vui long chon lai.\n");
+                printf("Lua chon khong hop le!\n");
+                break;
         }
+
+        // Sau m?i ch?c nang, y?u c?u ngu?i d?ng quay l?i menu ch?nh ho?c tho?t
+//        char option;
+//        printf("\nQuay lai menu chinh (b)? Hoac Thoat (0)?: ");
+//        scanf(" %c", &option);  // ??c l?a ch?n c?a ngu?i d?ng
+//        if (option == '0') {
+//            break;  // Tho?t chuong tr?nh
+//        }
+//        else if (option != 'b') {
+//            printf("Lua chon khong hop le! Thoat chuong trinh.\n");
+//            break;
+//        }
     }
+}
+int main() {
+    start();
     return 0;
 }
+
 
